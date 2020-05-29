@@ -4,7 +4,9 @@ const Server = require(`${process.env.root}/src/Apis/Server`)
 const Chaincore = require(`${process.env.root}/src/Apis/Chaincore`)
 
 const chains = {}
-const config = JSON.parse(require('fs').readFileSync(`${process.env.root}/config.json`))
+const args = process.argv.slice(2)
+const file = args[0] !== undefined ? args[0] : `${process.env.root}/config.json`
+const config = JSON.parse(require('fs').readFileSync(file))
 const supported = require(`${process.env.root}/supported`)
 
 console.log(`Setting up chains on: [${config.network}] network...`)
