@@ -136,9 +136,9 @@ node node_modules/chaincore-node/serve-stream.js /path/to/config.json
 #### Channels List
 | Method | Channel | Description |
 |---|---|---|
-| `subscribe`/`unsubscribe` | `{chain}:block` | Subscribe to blocks |
-| `subscribe`/`unsubscribe` | `{chain}:tx` | Subscribe to transactions |
-| `subscribe`/`unsubscribe` | `{chain}:utxo` | Subscribe to UTXOs |
+| `subscribe`/`unsubscribe` | `{chain}:block` | Subscribe / unsubscribe to blocks |
+| `subscribe`/`unsubscribe` | `{chain}:tx` | Subscribe / unsubscribe to transactions |
+| `subscribe`/`unsubscribe` | `{chain}:utxo` | Subscribe / unsubscribe to UTXOs |
 
 #### Socket JSON Request Structure
 ```
