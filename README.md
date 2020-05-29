@@ -1,5 +1,5 @@
 # Chaincore Node
-Chaincore, the NodeJS package that enables effective interaction between multiple cryptocurreny blockchains.
+Chaincore, the NodeJS package that enables effective interaction between multiple cryptocurrency blockchains.
 
 Chaincore provides REST + Websocket APIs for: Bitcoin, Bitcoin Cash and Litecoin nodes.
 
