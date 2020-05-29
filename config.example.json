@@ -1,0 +1,47 @@
+{
+  "api": {
+    "port": 7070
+  },
+  "stream": {
+    "port": 8080
+  },
+  "network": "mainnet",
+  "chains": {
+    "bch": {
+      "zmq": {
+        "host": "127.0.0.1",
+        "port": 20000
+      },
+      "rpc": {
+        "user": "username",
+        "pass": "password",
+        "host": "127.0.0.1",
+        "port": 30000
+      }
+    },
+    "btc": {
+      "zmq": {
+        "host": "127.0.0.1",
+        "port": 20001
+      },
+      "rpc": {
+        "user": "username",
+        "pass": "password",
+        "host": "127.0.0.1",
+        "port": 30001
+      }
+    },
+    "ltc": {
+      "zmq": {
+        "host": "127.0.0.1",
+        "port": 20002
+      },
+      "rpc": {
+        "user": "username",
+        "pass": "password",
+        "host": "127.0.0.1",
+        "port": 30002
+      }
+    }
+  }
+}
