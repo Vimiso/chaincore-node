@@ -1,6 +1,6 @@
 {
   "name": "chaincore-node",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "REST + Websocket API for: Bitcoin, Bitcoin Cash and Litecoin nodes.",
   "main": "index.js",
   "scripts": {
