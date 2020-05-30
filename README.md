@@ -120,7 +120,7 @@ node node_modules/chaincore-node/serve-api.js /path/to/config.json
 ```
 {
     "success": <bool>,
-    "message": <string>,
+    "message": <null|string>,
     "results": <object|array>
 }
 ```
