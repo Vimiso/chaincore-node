@@ -216,7 +216,7 @@ sudo apt install libzmq3-dev
 
 ##### Install (optional) `pm2` daemon manager
 ```
-npm install pm2
+npm install pm2@latest -g
 ```
 
 ##### Setup the project
