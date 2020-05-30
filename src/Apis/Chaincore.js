@@ -210,6 +210,7 @@ module.exports = class Chaincore
       try {
         let chain = req.params.chain
         let txId = req.params.txId
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         let hex = await this.chains[chain].rpc.getRawTx(txId)
         let tx = await this.chains[chain].rpc.getDecodedTx(hex)
 
@@ -232,6 +233,7 @@ module.exports = class Chaincore
       try {
         let chain = req.params.chain
         let hex = req.params.hex
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         let result = await this.chains[chain].rpc.sendRawTx(hx)
 
         console.log(`API [${ip}] [${chain}] broadcast tx`)
