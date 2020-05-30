@@ -152,7 +152,7 @@ node node_modules/chaincore-node/serve-stream.js /path/to/config.json
 #### Socket JSON Response Structure
 ```
 {
-    "success": <bool,
+    "success": <bool>,
     "message": <null|string>,
     "channel": <string>,
     "method": <string>,

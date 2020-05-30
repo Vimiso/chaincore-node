@@ -39,18 +39,21 @@ module.exports = class WsServer
 
     this.wss.on('connection', (ws, req) => {
       ws.id = crypto.randomBytes(20).toString('hex')
+      ws.ip = this.getClientIp(ws, req)
       ws.subs = {}
 
       this.makeClientSubbable(ws)
 
-      console.log(`WSS client connected: ${ws.id} - total: ${this.getClientsCount()}`)
+      console.log(`WSS client connected [${ws.id}][${ws.ip}]`)
+      console.log(`WSS total clients [${this.getClientsCount()}]`)
 
       ws.on('error', err => {
         throw err
       })
 
       ws.on('close', () => {
-        console.log(`WSS client disconnected: ${ws.id} - total: ${this.getClientsCount()}`)
+        console.log(`WSS client disconnected [${ws.id}][${ws.ip}]`)
+        console.log(`WSS total clients [${this.getClientsCount()}]`)
       })
     })
 
@@ -68,7 +71,7 @@ module.exports = class WsServer
       throw new Error('WSS closed')
     })
 
-    if (this.configIsSsl() && sslServer) {
+    if (sslServer) {
       sslServer.listen(this.config.port)
     }
 
@@ -88,23 +91,17 @@ module.exports = class WsServer
     ws.on('message', message => {
       let event = this.message.parse(message)
 
-      console.log(`WSS received client event: ${ws.id} => ${JSON.stringify(event)}`)
-
       if (! this.event.validate(event)) {
-        console.log(`WSS client: ${ws.id} event error: ${this.event.error}`)
+        console.log(`WSS client error [${ws.id}][${ws.ip}] [${this.event.error}]`)
 
         return this.sendClient(ws, this.message.makeFailure(this.event.error))
       }
 
       if (this.event.isUnsubMethod(event)) {
-        console.log(`WSS client: ${ws.id} unsubbing from: ${event.channel}`)
-
         return this.forgetClientSub(ws, event.channel)
       }
 
       if (this.event.isSubMethod(event)) {
-        console.log(`WSS client: ${ws.id} subbing to: ${event.channel}`)
-
         return this.setClientSub(ws, event.channel, {})
       }
     })
@@ -115,32 +112,6 @@ module.exports = class WsServer
     return this.getClientSub(ws, channel) !== undefined
   }
 
-  getClientSub(ws, channel)
-  {
-    return ws.subs[channel]
-  }
-
-  setClientSub(ws, channel, params)
-  {
-    console.log(`WSS client: ${ws.id} subbing to: ${channel}`)
-
-    ws.subs[channel] = {params: params}
-  }
-
-  forgetClientSub(ws, channel)
-  {
-    console.log(`WSS client: ${ws.id} forgetting sub: ${channel}`)
-
-    delete ws.subs[channel]
-  }
-
-  flushClientSubs(ws)
-  {
-    console.log(`WSS client: ${ws.id} flushing subs`)
-
-    ws.subs = {}
-  }
-
   getClients()
   {
     return this.wss.clients.values()
@@ -149,6 +120,43 @@ module.exports = class WsServer
   getClientsCount()
   {
     return this.wss.clients.size
+  }
+
+  getClientIp(ws, req)
+  {
+    let forwarded = req.headers['x-forwarded-for']
+
+    if (forwarded) {
+      return forwarded.split(/\s*,\s*/)[0]
+    }
+
+    return req.socket.remoteAddress;
+  }
+
+  getClientSub(ws, channel)
+  {
+    return ws.subs[channel]
+  }
+
+  setClientSub(ws, channel, params)
+  {
+    console.log(`WSS client sub [${ws.id}][${ws.ip}] [${channel}]`)
+
+    ws.subs[channel] = {params: params}
+  }
+
+  forgetClientSub(ws, channel)
+  {
+    console.log(`WSS client unsub [${ws.id}][${ws.ip}] [${channel}]`)
+
+    delete ws.subs[channel]
+  }
+
+  flushClientSubs(ws)
+  {
+    console.log(`WSS client flush subs [${ws.id}][${ws.ip}]`)
+
+    ws.subs = {}
   }
 
   sendClient(ws, message)

@@ -1,6 +1,6 @@
 {
   "name": "chaincore-node",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "REST + Websocket API for: Bitcoin, Bitcoin Cash and Litecoin nodes.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,20 @@
   },
   "homepage": "https://github.com/Vimiso/chaincore-node#readme",
   "author": "Vimiso",
-  "license": "ISC",
+  "license": "MIT",
+  "keywords": [
+    "blockchain",
+    "rest api",
+    "websocket",
+    "bitcoin",
+    "bitcoin cash",
+    "litecoin",
+    "btc",
+    "bch",
+    "ltc",
+    "cryptocurrency",
+    "full-node"
+  ],
   "dependencies": {
     "axios": "^0.19.2",
     "bitcore-lib": "^8.20.3",

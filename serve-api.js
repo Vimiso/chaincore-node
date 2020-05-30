@@ -9,11 +9,11 @@ const file = args[0] !== undefined ? args[0] : `${process.env.root}/config.json`
 const config = JSON.parse(require('fs').readFileSync(file))
 const supported = require(`${process.env.root}/supported`)
 
-console.log(`Setting up chains on: [${config.network}] network...`)
+console.log(`Setting up chains on [${config.network}] network...`)
 
 Object.keys(config.chains).forEach(chain => {
   if (! Object.keys(supported).includes(chain)) {
-    throw new Error(`Unsupported chain: ${chain}`)
+    throw new Error(`Unsupported chain [${chain}]`)
   }
 
   chains[chain] = {

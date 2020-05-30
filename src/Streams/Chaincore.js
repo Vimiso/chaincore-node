@@ -43,7 +43,7 @@ module.exports = class Chaincore
     let channel = this.wss.event.channels[`${chain}:block`]
     let blockHash = message
 
-    console.log(`[${channel}] => ${message}`)
+    console.log(`[${channel}] ${message}`)
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
@@ -59,7 +59,7 @@ module.exports = class Chaincore
     let channel = this.wss.event.channels[`${chain}:tx`]
     let txId = message
 
-    console.log(`[${channel}] => ${message}`)
+    console.log(`[${channel}] ${message}`)
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
@@ -75,7 +75,7 @@ module.exports = class Chaincore
     let channel = this.wss.event.channels[`${chain}:utxo`]
     let utxos = this.chains[chain].tsf.txToUtxos(message)
 
-    console.log(`[${channel}] => ${message.substring(0, 64)}...`)
+    console.log(`[${channel}] ${message.substring(0, 64)}...`)
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
@@ -86,7 +86,5 @@ module.exports = class Chaincore
         })
       }
     }
-
-    // console.log(utxos)
   }
 }

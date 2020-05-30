@@ -4,7 +4,6 @@ module.exports = class Chaincore
   {
     this.chains = chains
     this.api = api
-    this.valid = Object.keys(this.chains)
 
     this.bootParams()
     this.bootRoutes()
@@ -14,8 +13,10 @@ module.exports = class Chaincore
 
   bootParams()
   {
+    let valid = Object.keys(this.chains)
+
     this.api.server.param('chain', (req, res, next) => {
-      if (this.valid.includes(req.params.chain)) {
+      if (valid.includes(req.params.chain)) {
         return next()
       }
 
@@ -45,9 +46,10 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/peer', async (req, res, next) => {
       try {
         let chain = req.params.chain
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         let result = await this.chains[chain].rpc.getPeerInfo()
 
-        console.log('API showing peer info')
+        console.log(`API [${ip}] [${chain}] get peer info`)
 
         return res.status(200).json({
           success: true,
@@ -65,9 +67,10 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/network', async (req, res, next) => {
       try {
         let chain = req.params.chain
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         let result = await this.chains[chain].rpc.getNetworkInfo()
 
-        console.log('API showing network info')
+        console.log(`API [${ip}] [${chain}] get network info`)
 
         return res.status(200).json({
           success: true,
@@ -85,9 +88,10 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/mining', async (req, res, next) => {
       try {
         let chain = req.params.chain
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         let result = await this.chains[chain].rpc.getMiningInfo()
 
-        console.log('API showing mining info')
+        console.log(`API [${ip}] [${chain}] get mining info`)
 
         return res.status(200).json({
           success: true,
@@ -105,8 +109,9 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/blocks', async (req, res, next) => {
       let blocks = []
       let i = 0
-      let max = 5
+      let max = 10
       let chain = req.params.chain
+      let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
 
       try {
         let height = await this.chains[chain].rpc.getBlockHeight()
@@ -120,12 +125,12 @@ module.exports = class Chaincore
           height--;
         }
 
-        console.log('API showing blocks')
+        console.log(`API [${ip}] [${chain}] get blocks`)
 
         return res.status(200).json({
           success: true,
           message: `Showing ${max} latest blocks`,
-          results: blocks
+          results: blocks,
         })
       } catch (err) {
         return next(err)
@@ -138,11 +143,12 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/blocks/tip', async (req, res, next) => {
       try {
         let chain = req.params.chain
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         let tip = await this.chains[chain].rpc.getBlockHeight()
         let hash = await this.chains[chain].rpc.getBlockHash(tip)
         let block = await this.chains[chain].rpc.getBlock(hash)
 
-        console.log(`API showing best block`)
+        console.log(`API [${ip}] [${chain}] get best block`)
 
         return res.status(200).json({
           success: true,
@@ -161,9 +167,10 @@ module.exports = class Chaincore
       try {
         let chain = req.params.chain
         let hash = req.params.hash
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         let result = await this.chains[chain].rpc.getBlock(hash)
 
-        console.log(`API showing block: ${hash}`)
+        console.log(`API [${ip}] [${chain}] get block: ${hash}`)
 
         return res.status(200).json({
           success: true,
@@ -181,9 +188,10 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/mempool', async (req, res, next) => {
       try {
         let chain = req.params.chain
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
         let result = await this.chains[chain].rpc.getRawMempool()
 
-        console.log('API showing mempool')
+        console.log(`API [${ip}] [${chain}] get mempool`)
 
         return res.status(200).json({
           success: true,
@@ -205,11 +213,11 @@ module.exports = class Chaincore
         let hex = await this.chains[chain].rpc.getRawTx(txId)
         let tx = await this.chains[chain].rpc.getDecodedTx(hex)
 
-        console.log(`API showing tx: ${txId}`)
+        console.log(`API [${ip}] [${chain}] get tx: ${txId}`)
 
         return res.status(200).json({
           success: true,
-          message: `API showing tx`,
+          message: `Showing transaction`,
           results: tx,
         })
       } catch (err) {
@@ -226,11 +234,11 @@ module.exports = class Chaincore
         let hex = req.params.hex
         let result = await this.chains[chain].rpc.sendRawTx(hx)
 
-        console.log(`API sent raw tx: ${tx}`)
+        console.log(`API [${ip}] [${chain}] broadcast tx`)
 
         return res.status(200).json({
           success: true,
-          message: `Sent raw tx`,
+          message: `Broadcasted transaction`,
           results: result,
         })
       } catch (err) {
