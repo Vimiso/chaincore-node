@@ -251,11 +251,12 @@ whitelist=127.0.0.1
 txindex=1
 listen=1
 server=1
-irc=1
 upnp=1
+dbcache=512
 
 rpcport=30001
 rpcallowip=127.0.0.1
+
 rpcuser=username
 rpcpassword=password
 
