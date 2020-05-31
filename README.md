@@ -17,7 +17,7 @@ Chaincore, the NodeJS package that enables simplistic APIs among cryptocurrency 
         * [Socket JSON Request Structure](socket-json-request-structure)
         * [Socket JSON Response Structure](#socket-json-response-structure)
         * [NodeJS Code Example](#nodejs-code-example)
-        * [Vanilla JS Browser Code Example](#vanilla-js-browser-code-example)
+        * [Vanilla JS Code Example](#vanilla-js-code-example)
 * [Ubuntu Setup Cheatsheet](#ubuntu-setup-cheatsheet)
 * [License](#license)
 
@@ -183,7 +183,7 @@ ws.on('message', message => {
 })
 ```
 
-#### Vanilla JS Browser Code Example
+#### Vanilla JS Code Example
 No need to install anything else, simply run the following code in any modern browser:
 ```javascript
 const ws = new WebSocket('ws://127.0.0.1:8080')
@@ -252,12 +252,19 @@ listen=1
 server=1
 irc=1
 upnp=1
+
 port=20001
 rpcport=30001
 rpcallowip=127.0.0.1
 rpcuser=username
 rpcpassword=password
-datadir=/mnt/bitcoin # Make sure you have many gigabytes.
+
+datadir=/mnt/bitcoin
+
+zmqpubrawblock=tcp://127.0.0.1:20001
+zmqpubrawtx=tcp://127.0.0.1:20001
+zmqpubhashtx=tcp://127.0.0.1:20001
+zmqpubhashblock=tcp://127.0.0.1:20001
 ```
 
 *Important: a mounted disk (`/mnt/bitcoin`) with at-least 350GB is required to store the Bitcoin blockchain.*
