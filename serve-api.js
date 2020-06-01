@@ -4,12 +4,8 @@ const Server = require(`${process.env.root}/src/Apis/Server`)
 const Chaincore = require(`${process.env.root}/src/Apis/Chaincore`)
 
 const chains = {}
-const args = process.argv.slice(2)
-const file = args[0] !== undefined ? args[0] : `${process.env.root}/config.json`
-const config = JSON.parse(require('fs').readFileSync(file))
+const config = require(`${process.env.root}/config`)
 const supported = require(`${process.env.root}/supported`)
-
-console.log(`Setting up chains on [${config.network}] network...`)
 
 Object.keys(config.chains).forEach(chain => {
   if (! Object.keys(supported).includes(chain)) {
@@ -17,12 +13,7 @@ Object.keys(config.chains).forEach(chain => {
   }
 
   chains[chain] = {
-    rpc: new supported[chain].rpc(
-      config.chains[chain].rpc.user,
-      config.chains[chain].rpc.pass,
-      config.chains[chain].rpc.host,
-      config.chains[chain].rpc.port
-    ),
+    rpc: new supported[chain].rpc(config.chains[chain].rpc),
     tsf: new supported[chain].tsf(config.network)
   }
 })

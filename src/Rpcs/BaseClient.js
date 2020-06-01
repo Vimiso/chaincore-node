@@ -2,14 +2,14 @@ const axios = require('axios')
 
 module.exports = class BaseClient
 {
-  constructor(user, pass, host, port, protocol, timeout)
+  constructor(config)
   {
-    this.user = user
-    this.pass = pass
-    this.host = host
-    this.port = port
-    this.protocol = protocol || 'http'
-    this.timeout = timeout || 10000
+    this.user = config.user
+    this.pass = config.pass
+    this.host = config.host
+    this.port = config.port
+    this.protocol = config.protocol || 'http'
+    this.timeout = config.timeout || 10000
   }
 
   buildBody(method, params)

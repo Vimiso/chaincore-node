@@ -2,12 +2,12 @@ const Zeromq = require('zeromq')
 
 module.exports = class ZmqSub
 {
-  constructor(host, port)
+  constructor(config)
   {
-    this.pcol = 'tcp'
-    this.host = host
-    this.port = port
-    this.resource = `${this.pcol}://${this.host}:${this.port}`
+    this.protocol = config.protocol || 'tcp'
+    this.host = config.host
+    this.port = config.port
+    this.resource = `${this.protocol}://${this.host}:${this.port}`
 
     this.zmq = Zeromq.socket('sub')
     this.zmq.connect(this.resource)
