@@ -217,6 +217,7 @@ sudo apt install libzmq3-dev
 ##### Install (optional) `pm2` daemon manager
 ```
 npm install pm2@latest -g
+pm2 install pm2-logrotate
 ```
 
 ##### Setup the project
