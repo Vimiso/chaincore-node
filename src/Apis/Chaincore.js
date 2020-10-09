@@ -46,7 +46,7 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/peer', async (req, res, next) => {
       try {
         let chain = req.params.chain
-        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        let ip = this.api.getReqIp(req)
         let result = await this.chains[chain].rpc.getPeerInfo()
 
         console.log(`API [${ip}] [${chain}] get peer info`)
@@ -67,7 +67,7 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/network', async (req, res, next) => {
       try {
         let chain = req.params.chain
-        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        let ip = this.api.getReqIp(req)
         let result = await this.chains[chain].rpc.getNetworkInfo()
 
         console.log(`API [${ip}] [${chain}] get network info`)
@@ -88,7 +88,7 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/mining', async (req, res, next) => {
       try {
         let chain = req.params.chain
-        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        let ip = this.api.getReqIp(req)
         let result = await this.chains[chain].rpc.getMiningInfo()
 
         console.log(`API [${ip}] [${chain}] get mining info`)
@@ -104,14 +104,14 @@ module.exports = class Chaincore
     })
   }
 
-  initGetBlocksRoute()
+  initGetBlocksRoute(amount)
   {
     this.api.server.get('/api/:chain/blocks', async (req, res, next) => {
       let blocks = []
       let i = 0
       let max = 10
       let chain = req.params.chain
-      let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+      let ip = this.api.getReqIp(req)
 
       try {
         let height = await this.chains[chain].rpc.getBlockHeight()
@@ -143,7 +143,7 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/blocks/tip', async (req, res, next) => {
       try {
         let chain = req.params.chain
-        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        let ip = this.api.getReqIp(req)
         let tip = await this.chains[chain].rpc.getBlockHeight()
         let hash = await this.chains[chain].rpc.getBlockHash(tip)
         let block = await this.chains[chain].rpc.getBlock(hash)
@@ -167,7 +167,7 @@ module.exports = class Chaincore
       try {
         let chain = req.params.chain
         let hash = req.params.hash
-        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        let ip = this.api.getReqIp(req)
         let result = await this.chains[chain].rpc.getBlock(hash)
 
         console.log(`API [${ip}] [${chain}] get block: ${hash}`)
@@ -188,7 +188,7 @@ module.exports = class Chaincore
     this.api.server.get('/api/:chain/mempool', async (req, res, next) => {
       try {
         let chain = req.params.chain
-        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        let ip = this.api.getReqIp(req)
         let result = await this.chains[chain].rpc.getRawMempool()
 
         console.log(`API [${ip}] [${chain}] get mempool`)
@@ -210,7 +210,7 @@ module.exports = class Chaincore
       try {
         let chain = req.params.chain
         let txId = req.params.txId
-        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        let ip = this.api.getReqIp(req)
         let hex = await this.chains[chain].rpc.getRawTx(txId)
         let tx = await this.chains[chain].rpc.getDecodedTx(hex)
 
@@ -233,7 +233,7 @@ module.exports = class Chaincore
       try {
         let chain = req.params.chain
         let hex = req.params.hex
-        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        let ip = this.api.getReqIp(req)
         let result = await this.chains[chain].rpc.sendRawTx(hx)
 
         console.log(`API [${ip}] [${chain}] broadcast tx`)

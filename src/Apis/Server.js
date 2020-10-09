@@ -8,6 +8,11 @@ module.exports = class Server
     this.server = express()
   }
 
+  getReqIp(req)
+  {
+    return req.headers['x-forwarded-for'] || req.connection.remoteAddress
+  }
+
   start()
   {
     this.server.listen(this.config.port, () => {
