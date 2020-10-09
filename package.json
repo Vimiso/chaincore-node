@@ -31,11 +31,11 @@
   ],
   "dependencies": {
     "axios": "^0.19.2",
-    "bitcore-lib": "^8.20.3",
-    "bitcore-lib-cash": "^8.20.3",
+    "bitcore-lib": "^8.22.2",
+    "bitcore-lib-cash": "^8.22.2",
     "express": "^4.17.1",
     "litecore-lib": "^0.13.22",
-    "ws": "^7.3.0",
+    "ws": "^7.3.1",
     "zeromq": "^5.2.0"
   },
   "devDependencies": {
