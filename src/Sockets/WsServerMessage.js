@@ -20,19 +20,19 @@ module.exports = class WsServerMessage
     return parsed
   }
 
-  makeUpdate(channel, results)
+  makeEvent(channel, results)
   {
-    return this.make(true, null, channel, 'update', results)
+    return this.make(true, null, channel, 'event', results)
   }
 
   makeSuccess(message)
   {
-    return this.make(true, message, null, null, {})
+    return this.make(true, message, null, 'success', {})
   }
 
   makeFailure(message)
   {
-    return this.make(false, message, null, null, {})
+    return this.make(false, message, null, 'failure', {})
   }
 
   make(success, message, channel, method, results)
