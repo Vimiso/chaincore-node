@@ -10,7 +10,7 @@ module.exports = class Chaincore
 
     Object.keys(this.chains).forEach(chain => {
       this.chains[chain].zmq.sub(this.subbable)
-      this.chains[chain].zmq.onMessage((topic, message) => {
+      this.chains[chain].zmq.on('message').then((topic, message) => {
         this.handleMessage(chain, topic.toString(), message.toString('hex'))
       })
 
@@ -47,7 +47,7 @@ module.exports = class Chaincore
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
-        let message = this.wss.message.makeUpdate(channel, {blockHash: blockHash})
+        let message = this.wss.message.makeEvent(channel, {blockHash: blockHash})
 
         this.wss.sendClient(ws, message)
       }
@@ -63,7 +63,7 @@ module.exports = class Chaincore
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
-        let message = this.wss.message.makeUpdate(channel, {txId: txId})
+        let message = this.wss.message.makeEvent(channel, {txId: txId})
 
         this.wss.sendClient(ws, message)
       }
@@ -80,7 +80,7 @@ module.exports = class Chaincore
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
         utxos.forEach(utxo => {
-          let message = this.wss.message.makeUpdate(channel, utxo)
+          let message = this.wss.message.makeEvent(channel, utxo)
 
           this.wss.sendClient(ws, message)
         })
