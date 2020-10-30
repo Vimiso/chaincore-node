@@ -18,4 +18,4 @@ Object.keys(config.chains).forEach(chain => {
   }
 })
 
-const Stream = new Chaincore(chains, new Server(config.api))
+const Api = new Chaincore(chains, new Server(config.api))

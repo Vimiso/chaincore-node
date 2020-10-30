@@ -8,7 +8,6 @@ module.exports = class ZmqSub
     this.host = config.host
     this.port = config.port
     this.resource = `${this.protocol}://${this.host}:${this.port}`
-
     this.zmq = Zeromq.socket('sub')
     this.zmq.connect(this.resource)
 

@@ -4,14 +4,12 @@ module.exports = class Chaincore
   {
     this.chains = chains
     this.api = api
-
-    this.bootParams()
-    this.bootRoutes()
-
+    this.specifyParams()
+    this.specifyRoutes()
     this.api.start()
   }
 
-  bootParams()
+  specifyParams()
   {
     let valid = Object.keys(this.chains)
 
@@ -28,7 +26,7 @@ module.exports = class Chaincore
     })
   }
 
-  bootRoutes()
+  specifyRoutes()
   {
     this.initGetPeerInfoRoute()
     this.initGetNetworkInfoRoute()
