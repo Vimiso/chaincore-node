@@ -1,4 +1,4 @@
-const Zeromq = require('zeromq')
+const Zeromq = require('zeromq/v5-compat')
 
 module.exports = class ZmqSub
 {
