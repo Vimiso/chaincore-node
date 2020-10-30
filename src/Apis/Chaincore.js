@@ -1,7 +1,5 @@
-module.exports = class Chaincore
-{
-  constructor(chains, api)
-  {
+module.exports = class Chaincore {
+  constructor(chains, api) {
     this.chains = chains
     this.api = api
     this.specifyParams()
@@ -9,8 +7,7 @@ module.exports = class Chaincore
     this.api.start()
   }
 
-  specifyParams()
-  {
+  specifyParams() {
     let valid = Object.keys(this.chains)
 
     this.api.server.param('chain', (req, res, next) => {
@@ -26,8 +23,7 @@ module.exports = class Chaincore
     })
   }
 
-  specifyRoutes()
-  {
+  specifyRoutes() {
     this.initGetPeerInfoRoute()
     this.initGetNetworkInfoRoute()
     this.initGetMiningInfoRoute()
@@ -39,8 +35,7 @@ module.exports = class Chaincore
     this.initSendRawTxRoute()
   }
 
-  initGetPeerInfoRoute()
-  {
+  initGetPeerInfoRoute() {
     this.api.server.get('/api/:chain/peer', async (req, res, next) => {
       try {
         let chain = req.params.chain
@@ -60,8 +55,7 @@ module.exports = class Chaincore
     })
   }
 
-  initGetNetworkInfoRoute()
-  {
+  initGetNetworkInfoRoute() {
     this.api.server.get('/api/:chain/network', async (req, res, next) => {
       try {
         let chain = req.params.chain
@@ -81,8 +75,7 @@ module.exports = class Chaincore
     })
   }
 
-  initGetMiningInfoRoute()
-  {
+  initGetMiningInfoRoute() {
     this.api.server.get('/api/:chain/mining', async (req, res, next) => {
       try {
         let chain = req.params.chain
@@ -102,8 +95,7 @@ module.exports = class Chaincore
     })
   }
 
-  initGetBlocksRoute(amount)
-  {
+  initGetBlocksRoute(amount) {
     this.api.server.get('/api/:chain/blocks', async (req, res, next) => {
       let blocks = []
       let i = 0
@@ -120,7 +112,7 @@ module.exports = class Chaincore
           blocks.push({height: height, hash: hash})
 
           i++
-          height--;
+          height--
         }
 
         console.log(`API [${ip}] [${chain}] get blocks`)
@@ -136,8 +128,7 @@ module.exports = class Chaincore
     })
   }
 
-  initGetBlocksTipRoute()
-  {
+  initGetBlocksTipRoute() {
     this.api.server.get('/api/:chain/blocks/tip', async (req, res, next) => {
       try {
         let chain = req.params.chain
@@ -159,8 +150,7 @@ module.exports = class Chaincore
     })
   }
 
-  initGetBlockRoute()
-  {
+  initGetBlockRoute() {
     this.api.server.get('/api/:chain/block/:hash', async (req, res, next) => {
       try {
         let chain = req.params.chain
@@ -181,8 +171,7 @@ module.exports = class Chaincore
     })
   }
 
-  initGetRawMempoolRoute()
-  {
+  initGetRawMempoolRoute() {
     this.api.server.get('/api/:chain/mempool', async (req, res, next) => {
       try {
         let chain = req.params.chain
@@ -202,8 +191,7 @@ module.exports = class Chaincore
     })
   }
 
-  initGetTxRoute()
-  {
+  initGetTxRoute() {
     this.api.server.get('/api/:chain/tx/:txId', async (req, res, next) => {
       try {
         let chain = req.params.chain
@@ -225,8 +213,7 @@ module.exports = class Chaincore
     })
   }
 
-  initSendRawTxRoute()
-  {
+  initSendRawTxRoute() {
     this.api.server.get('/api/:chain/sendrawtx/:hex', async (req, res, next) => {
       try {
         let chain = req.params.chain

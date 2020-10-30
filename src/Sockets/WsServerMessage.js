@@ -1,12 +1,9 @@
-module.exports = class WsServerMessage
-{
-  constructor()
-  {
+module.exports = class WsServerMessage {
+  constructor() {
     //
   }
 
-  parse(message)
-  {
+  parse(message) {
     let parsed = {}
 
     try {
@@ -20,29 +17,25 @@ module.exports = class WsServerMessage
     return parsed
   }
 
-  makeEvent(channel, results)
-  {
+  makeEvent(channel, results) {
     return this.make(true, null, channel, 'event', results)
   }
 
-  makeSuccess(message)
-  {
+  makeSuccess(message) {
     return this.make(true, message, null, 'success', {})
   }
 
-  makeFailure(message)
-  {
+  makeFailure(message) {
     return this.make(false, message, null, 'failure', {})
   }
 
-  make(success, message, channel, method, results)
-  {
+  make(success, message, channel, method, results) {
     return {
       success: success,
       message: message,
       channel: channel,
       method: method,
-      results: results
+      results: results,
     }
   }
 }

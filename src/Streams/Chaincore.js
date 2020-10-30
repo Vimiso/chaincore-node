@@ -1,15 +1,16 @@
-module.exports = class Chaincore
-{
-  constructor(chains, wss)
-  {
+module.exports = class Chaincore {
+  constructor(chains, wss) {
     this.chains = chains
     this.wss = wss
-    this.subbable = ['hashblock', 'hashtx', 'rawtx']
+    this.wss.event.setChannels(this.getChannels())
+    this.wss.start()
+  }
 
+  getChannels() {
     let channels = {}
 
-    Object.keys(this.chains).forEach(chain => {
-      this.chains[chain].zmq.sub(this.subbable)
+    Object.keys(this.chains).forEach((chain) => {
+      this.chains[chain].zmq.sub(['hashblock', 'hashtx', 'rawtx'])
       this.chains[chain].zmq.onMessage((topic, message) => {
         this.handleMessage(chain, topic.toString(), message.toString('hex'))
       })
@@ -19,12 +20,10 @@ module.exports = class Chaincore
       channels[`${chain}:utxo`] = `${chain}:utxo`
     })
 
-    this.wss.event.setChannels(channels)
-    this.wss.start()
+    return channels
   }
 
-  handleMessage(chain, topic, message)
-  {
+  handleMessage(chain, topic, message) {
     if (topic === 'hashblock') {
       return this.handleBlock(chain, topic, message)
     }
@@ -38,8 +37,7 @@ module.exports = class Chaincore
     }
   }
 
-  handleBlock(chain, topic, message)
-  {
+  handleBlock(chain, topic, message) {
     let channel = this.wss.event.channels[`${chain}:block`]
     let blockHash = message
 
@@ -54,8 +52,7 @@ module.exports = class Chaincore
     }
   }
 
-  handleTx(chain, topic, message)
-  {
+  handleTx(chain, topic, message) {
     let channel = this.wss.event.channels[`${chain}:tx`]
     let txId = message
 
@@ -70,8 +67,7 @@ module.exports = class Chaincore
     }
   }
 
-  handleRawTx(chain, topic, message)
-  {
+  handleRawTx(chain, topic, message) {
     let channel = this.wss.event.channels[`${chain}:utxo`]
     let utxos = this.chains[chain].tsf.txToUtxos(message)
 
@@ -79,7 +75,7 @@ module.exports = class Chaincore
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
-        utxos.forEach(utxo => {
+        utxos.forEach((utxo) => {
           let message = this.wss.message.makeEvent(channel, utxo)
 
           this.wss.sendClient(ws, message)

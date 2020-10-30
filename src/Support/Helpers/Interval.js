@@ -1,22 +1,17 @@
-module.exports = class Interval
-{
-  constructor()
-  {
+module.exports = class Interval {
+  constructor() {
     this.intervals = {}
   }
 
-  has(key)
-  {
+  has(key) {
     return this.intervals[key] !== undefined
   }
 
-  set(key, callback, ms)
-  {
+  set(key, callback, ms) {
     this.intervals[key] = setInterval(callback, ms)
   }
 
-  forget(key)
-  {
+  forget(key) {
     if (this.has(key)) {
       clearInterval(this.intervals[key])
     }
@@ -24,9 +19,8 @@ module.exports = class Interval
     delete this.intervals[key]
   }
 
-  flush()
-  {
-    Object.keys(this.intervals).forEach(key => {
+  flush() {
+    Object.keys(this.intervals).forEach((key) => {
       this.forget(key)
     })
   }

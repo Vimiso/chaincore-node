@@ -1,7 +1,5 @@
-module.exports = class WsServerEvent
-{
-  constructor()
-  {
+module.exports = class WsServerEvent {
+  constructor() {
     this.error = null
     this.errors = {
       invalid_json_string: 'Please send a valid JSON string',
@@ -16,57 +14,50 @@ module.exports = class WsServerEvent
     this.channels = {}
   }
 
-  isSubMethod(event)
-  {
+  isSubMethod(event) {
     return event.method === this.methods.sub
   }
 
-  isUnsubMethod(event)
-  {
+  isUnsubMethod(event) {
     return event.method === this.methods.unsub
   }
 
-  hasChannel(event)
-  {
+  hasChannel(event) {
     return this.channels[event.channel] !== undefined
   }
 
-  setChannels(channels)
-  {
+  setChannels(channels) {
     this.channels = channels
   }
 
-  getChannels()
-  {
+  getChannels() {
     return Object.values(this.channels)
   }
 
-  getMethods()
-  {
+  getMethods() {
     return Object.values(this.methods)
   }
 
-  validate(event)
-  {
+  validate(event) {
     if (typeof event !== 'object') {
       this.error = this.errors.invalid_json_string
 
       return false
     }
 
-    if (! this.getMethods().includes(event.method)) {
+    if (!this.getMethods().includes(event.method)) {
       this.error = this.errors.invalid_request_method
 
       return false
     }
 
-    if (! this.getChannels().includes(event.channel)) {
+    if (!this.getChannels().includes(event.channel)) {
       this.error = this.errors.invalid_request_channel
 
       return false
     }
 
-    if (! Array.isArray(event.params)) {
+    if (!Array.isArray(event.params)) {
       this.error = this.errors.invalid_request_params
 
       return false

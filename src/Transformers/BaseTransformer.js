@@ -1,13 +1,10 @@
-module.exports = class BaseTransformer
-{
-  constructor(network, lib)
-  {
+module.exports = class BaseTransformer {
+  constructor(network, lib) {
     this.network = network
     this.lib = lib
   }
 
-  txToUtxos(message)
-  {
+  txToUtxos(message) {
     let utxos = []
     let tx = this.lib.Transaction(message).toObject()
 

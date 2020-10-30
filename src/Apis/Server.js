@@ -1,20 +1,16 @@
 const express = require('express')
 
-module.exports = class Server
-{
-  constructor(config)
-  {
+module.exports = class Server {
+  constructor(config) {
     this.config = config
     this.server = express()
   }
 
-  getReqIp(req)
-  {
+  getReqIp(req) {
     return req.headers['x-forwarded-for'] || req.connection.remoteAddress
   }
 
-  start()
-  {
+  start() {
     this.server.listen(this.config.port, () => {
       console.log(`API started on port: ${this.config.port}`)
     })
