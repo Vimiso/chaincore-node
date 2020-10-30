@@ -22,12 +22,10 @@ module.exports = class ZmqSub
     })
   }
 
-  on(type)
+  onMessage(callback)
   {
-    return new Promise(resolve => {
-      this.zmq.on(type, (topic, message) => {
-        resolve(topic, message)
-      })
+    this.zmq.on('message', (topic, message) => {
+      callback(topic, message)
     })
   }
 }

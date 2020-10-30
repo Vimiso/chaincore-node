@@ -10,7 +10,7 @@ module.exports = class Chaincore
 
     Object.keys(this.chains).forEach(chain => {
       this.chains[chain].zmq.sub(this.subbable)
-      this.chains[chain].zmq.on('message').then((topic, message) => {
+      this.chains[chain].zmq.onMessage((topic, message) => {
         this.handleMessage(chain, topic.toString(), message.toString('hex'))
       })
 
