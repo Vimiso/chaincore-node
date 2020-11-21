@@ -5,11 +5,11 @@ module.exports = class BaseTransformer {
   }
 
   txToUtxos(message) {
-    let utxos = []
-    let tx = this.lib.Transaction(message).toObject()
+    const utxos = []
+    const tx = this.lib.Transaction(message).toObject()
 
     tx.outputs.forEach((output, index) => {
-      let script = this.lib.Script(output.script)
+      const script = this.lib.Script(output.script)
 
       utxos.push({
         txId: tx.hash,

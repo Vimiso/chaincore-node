@@ -7,7 +7,7 @@ module.exports = class Chaincore {
   }
 
   getChannels() {
-    let channels = {}
+    const channels = {}
 
     Object.keys(this.chains).forEach((chain) => {
       this.chains[chain].zmq.sub(['hashblock', 'hashtx', 'rawtx'])
@@ -38,14 +38,14 @@ module.exports = class Chaincore {
   }
 
   handleBlock(chain, topic, message) {
-    let channel = this.wss.event.channels[`${chain}:block`]
-    let blockHash = message
+    const channel = this.wss.event.channels[`${chain}:block`]
+    const blockHash = message
 
     console.log(`[${channel}] ${message}`)
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
-        let message = this.wss.message.makeEvent(channel, {blockHash: blockHash})
+        const message = this.wss.message.makeEvent(channel, {blockHash: blockHash})
 
         this.wss.sendClient(ws, message)
       }
@@ -53,14 +53,14 @@ module.exports = class Chaincore {
   }
 
   handleTx(chain, topic, message) {
-    let channel = this.wss.event.channels[`${chain}:tx`]
-    let txId = message
+    const channel = this.wss.event.channels[`${chain}:tx`]
+    const txId = message
 
     console.log(`[${channel}] ${message}`)
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
-        let message = this.wss.message.makeEvent(channel, {txId: txId})
+        const message = this.wss.message.makeEvent(channel, {txId: txId})
 
         this.wss.sendClient(ws, message)
       }
@@ -68,15 +68,15 @@ module.exports = class Chaincore {
   }
 
   handleRawTx(chain, topic, message) {
-    let channel = this.wss.event.channels[`${chain}:utxo`]
-    let utxos = this.chains[chain].tsf.txToUtxos(message)
+    const channel = this.wss.event.channels[`${chain}:utxo`]
+    const utxos = this.chains[chain].tsf.txToUtxos(message)
 
     console.log(`[${channel}] ${message.substring(0, 64)}...`)
 
     for (let ws of this.wss.getClients()) {
       if (this.wss.hasClientSub(ws, channel)) {
         utxos.forEach((utxo) => {
-          let message = this.wss.message.makeEvent(channel, utxo)
+          const message = this.wss.message.makeEvent(channel, utxo)
 
           this.wss.sendClient(ws, message)
         })

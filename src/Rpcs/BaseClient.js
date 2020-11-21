@@ -20,7 +20,7 @@ module.exports = class BaseClient {
   }
 
   request(method, params) {
-    let req = {
+    const request = {
       method: 'POST',
       timeout: this.timeout,
       url: `${this.protocol}://${this.host}:${this.port}`,
@@ -29,7 +29,7 @@ module.exports = class BaseClient {
       data: JSON.stringify(this.buildBody(method, params)),
     }
 
-    return axios(req)
+    return axios(request)
   }
 
   getPeerInfo() {
@@ -102,8 +102,8 @@ module.exports = class BaseClient {
       })
   }
 
-  getDecodedTx(hex) {
-    return this.request('decodeRawTransaction', [hex])
+  getRawTx(txId) {
+    return this.request('getRawTransaction', [txId, true])
       .then((resp) => {
         return resp.data.result
       })
@@ -112,8 +112,22 @@ module.exports = class BaseClient {
       })
   }
 
-  getRawTx(txId) {
-    return this.request('getRawTransaction', [txId])
+  importAddress(address, rescan = false, label = '') {
+    const parameters = [address, label, rescan]
+
+    return this.request('importAddress', parameters)
+      .then((resp) => {
+        return resp.data.result
+      })
+      .catch((err) => {
+        throw err
+      })
+  }
+
+  listUnspent(address, minConfirmations, maxConfirmations = 9999999) {
+    const parameters = [minConfirmations, maxConfirmations, [address]]
+
+    return this.request('listUnspent', parameters)
       .then((resp) => {
         return resp.data.result
       })

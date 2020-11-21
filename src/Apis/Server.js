@@ -1,9 +1,11 @@
 const express = require('express')
+const Response = require(`${process.env.root}/src/Apis/Response`)
 
 module.exports = class Server {
   constructor(config) {
     this.config = config
     this.server = express()
+    this.response = new Response()
   }
 
   getReqIp(req) {
@@ -18,11 +20,11 @@ module.exports = class Server {
     this.server.use((err, req, res, next) => {
       console.error(`API request error: ${err.message}`)
 
-      return res.status(500).json({
-        success: false,
-        message: err.message,
-        results: {},
-      })
+      const errors = err.response ? err.response.data.error : {}
+
+      return res
+        .status(500)
+        .json(this.response.create(false, err.message, {}, errors))
     })
   }
 }

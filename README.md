@@ -28,7 +28,7 @@ Chaincore, the NodeJS package that enables simplistic APIs among cryptocurrency 
 
 ## Prerequisites
 * `npm` >= 6.0.0
-* `node` >= 8.0.0
+* `node` >= 10.0.0
 * `libzmq3-dev`
 
 ## Installation
@@ -93,7 +93,7 @@ Create a `config.json` using `config.example.json`
 </details>
 
 # Usage
-Chaincore provides REST + Websocket APIs for: Bitcoin, Bitcoin Cash and Litecoin nodes.
+Chaincore provides REST and Websocket APIs for: Bitcoin, Bitcoin Cash and Litecoin nodes.
 
 ## REST API
 The Chaincore REST API allows for effective blockchain interaction via HTTP endpoints.
@@ -106,15 +106,22 @@ node node_modules/chaincore-node/serve-api.js /path/to/config.json
 #### Endpoints List
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/{chain}/peer` | Get peer info |
-| GET | `/api/{chain}/network` | Get network info |
-| GET | `/api/{chain}/mining` | Get mining info |
-| GET | `/api/{chain}/blocks` | Get latest blocks |
-| GET | `/api/{chain}/blocks/tip` | Get best block |
-| GET | `/api/{chain}/block/{hash}` | Get block details given the `hash` |
-| GET | `/api/{chain}/mempool` | Get mempool transactions |
-| GET | `/api/{chain}/tx/{txId}` | Get transaction details given the `txId` |
-| GET | `/api/{chain}/sendrawtx/{hex}` | Broadcast a transaction given the `hex` |
+| GET | `/api/:chain/peer` | Get peer info |
+| GET | `/api/:chain/network` | Get network info |
+| GET | `/api/:chain/mining` | Get mining info |
+| GET | `/api/:chain/blocks` | Get latest blocks |
+| GET | `/api/:chain/blocks/tip` | Get best block |
+| GET | `/api/:chain/blocks/height` | Get blocks height |
+| GET | `/api/:chain/block/:hash` | Get block details given the `hash` |
+| POST | `/api/:chain/address/:address` | Import the given `address` without rescanning |
+| GET | `/api/:chain/address/:address/utxos` | Get UTXOs belonging to the given `address` |
+| GET | `/api/:chain/address/:address/balance` | Get unspent balance of the given `address` |
+| GET | `/api/:chain/mempool` | Get mempool transactions |
+| GET | `/api/:chain/tx/:txId` | Get transaction details given the `txId` |
+| GET | `/api/:chain/tx/:txId/block` | Get transaction block details given the `txId` |
+| POST | `/api/:chain/broadcast/:hex` | Broadcast a transaction given the `hex` |
+
+**Please note:** endpoints that get address UTXOs or balance will only return data that occurred after the address was imported. Chaincore is designed to be watch-only, therefore no rescan happens following an address import.
 
 #### HTTP JSON Response Structure
 ```
@@ -136,9 +143,9 @@ node node_modules/chaincore-node/serve-stream.js /path/to/config.json
 #### Channels List
 | Method | Channel | Description |
 |---|---|---|
-| `subscribe`/`unsubscribe` | `{chain}:block` | Stream new blocks |
-| `subscribe`/`unsubscribe` | `{chain}:tx` | Stream new transactions |
-| `subscribe`/`unsubscribe` | `{chain}:utxo` | Stream new UTXOs |
+| `subscribe`/`unsubscribe` | `btc:block` | Stream new blocks |
+| `subscribe`/`unsubscribe` | `btc:tx` | Stream new transactions |
+| `subscribe`/`unsubscribe` | `btc:utxo` | Stream new UTXOs |
 
 #### Socket JSON Request Structure
 ```
@@ -237,8 +244,8 @@ vi /var/chaincore-node/config.json
 ```
 mkdir /root/.bitcoin
 cd /root/.bitcoin
-wget https://bitcoin.org/bin/bitcoin-core-0.19.1/bitcoin-0.19.1-x86_64-linux-gnu.tar.gz
-tar -xf bitcoin-0.19.1-x86_64-linux-gnu.tar.gz
+wget https://bitcoin.org/bin/bitcoin-core-0.20.1/bitcoin-0.20.1-x86_64-linux-gnu.tar.gz
+tar -xf bitcoin-0.20.1-x86_64-linux-gnu.tar.gz
 ```
 
 ##### Configure the full-node
@@ -273,7 +280,7 @@ zmqpubhashblock=tcp://127.0.0.1:20001
 
 ##### Run `bitcoind` as a daemon:
 ```
-/root/.bitcoin/bitcoin-0.19.1/bin/bitcoind -conf=/root/.bitcoin/bitcoin.conf -daemon
+/root/.bitcoin/bitcoin-0.20.1/bin/bitcoind -conf=/root/.bitcoin/bitcoin.conf -daemon
 ```
 
 Now you must wait for Bitcoin to sync... you can find the sync progress and other useful logs in: `/mnt/bitcoin/debug.log`.
@@ -293,9 +300,9 @@ You can monitor `pm2` daemons by running: `pm2 monit`
 ##### You're done!
 
 You can repeat these instructions with other supported blockchains, here's the list:
-* Bitcoin: https://bitcoin.org/bin/bitcoin-core-0.19.1/bitcoin-0.19.1-x86_64-linux-gnu.tar.gz
-* Bitcoin Cash: https://download.bitcoinabc.org/latest/linux/bitcoin-abc-0.21.7-x86_64-linux-gnu.tar.gz
-* Litecoin: https://download.litecoin.org/litecoin-0.17.1/linux/litecoin-0.17.1-x86_64-linux-gnu.tar.gz
+* Bitcoin: https://bitcoin.org/bin/bitcoin-core-0.20.1/bitcoin-0.20.1-x86_64-linux-gnu.tar.gz
+* Bitcoin Cash: https://github.com/bitcoin-cash-node/bitcoin-cash-node/releases/download/v22.1.0/bitcoin-cash-node-22.1.0-x86_64-linux-gnu.tar.gz
+* Litecoin: https://download.litecoin.org/litecoin-0.18.1/linux/litecoin-0.18.1-x86_64-linux-gnu.tar.gz
 
 ## License
 

@@ -60,8 +60,7 @@ module.exports = class WsServer {
 
   heartbeat() {
     this.intervals.forget('heartbeat')
-    this.intervals.set(
-      'heartbeat',
+    this.intervals.set('heartbeat',
       () => {
         this.broadcastPing()
       },
@@ -91,7 +90,7 @@ module.exports = class WsServer {
 
   makeClientSubbable(ws) {
     ws.on('message', (message) => {
-      let event = this.message.parse(message)
+      const event = this.message.parse(message)
 
       if (!this.event.validate(event)) {
         console.log(`WSS client error [${ws.id}][${ws.ip}] [${this.event.error}]`)
@@ -122,7 +121,7 @@ module.exports = class WsServer {
   }
 
   getClientIp(ws, req) {
-    let forwarded = req.headers['x-forwarded-for']
+    const forwarded = req.headers['x-forwarded-for']
 
     if (forwarded) {
       return forwarded.split(/\s*,\s*/)[0]
