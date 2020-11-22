@@ -112,6 +112,17 @@ module.exports = class BaseClient {
       })
   }
 
+  estimateFee(target = 1)
+  {
+    return this.request('estimateSmartFee', [target])
+      .then((resp) => {
+        return resp.data.result
+      })
+      .catch((err) => {
+        throw err
+      })
+  }
+
   importAddress(address, rescan = false, label = '') {
     const parameters = [address, label, rescan]
 

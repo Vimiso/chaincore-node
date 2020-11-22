@@ -2,21 +2,10 @@ module.exports = class Chaincore {
   constructor(chains, api) {
     this.chains = chains
     this.api = api
-    this.specifyParams()
+    this.api.usesParams('chain', Object.keys(this.chains))
+    this.api.usesBodyParser()
     this.specifyRoutes()
     this.api.start()
-  }
-
-  specifyParams() {
-    const valid = Object.keys(this.chains)
-
-    this.api.server.param('chain', (req, res, next) => {
-      if (valid.includes(req.params.chain)) {
-        return next()
-      }
-
-      return res.status(400).json(this.api.response.create(false, 'Unsupported chain'))
-    })
   }
 
   specifyRoutes() {
@@ -31,8 +20,11 @@ module.exports = class Chaincore {
     this.initGetTxRoute()
     this.initGetBalanceOfAddressRoute()
     this.initGetUtxosOfAddressRoute()
-    this.initBroadcastTxRoute()
-    this.initImportAddressRoute()
+    this.initGetFeeEstimate()
+    this.initPostBroadcastTxRoute()
+    this.initPostImportAddressRoute()
+    this.initPostMiscTxSignerRoute()
+    this.initPostMiscTxIdealFeeRoute()
   }
 
   initGetPeerInfoRoute() {
@@ -109,7 +101,7 @@ module.exports = class Chaincore {
       }
 
       try {
-        const height = await this.chains[chain].rpc.getBlockHeight()
+        let height = await this.chains[chain].rpc.getBlockHeight()
 
         while (i < limit) {
           const hash = await this.chains[chain].rpc.getBlockHash(height)
@@ -273,7 +265,30 @@ module.exports = class Chaincore {
     })
   }
 
-  initBroadcastTxRoute() {
+  initGetFeeEstimate() {
+    const path = '/api/:chain/fee'
+
+    this.api.server.get(path, async (req, res, next) => {
+      try {
+        const chain = req.params.chain
+        const ip = this.api.getReqIp(req)
+        const target = parseInt(req.query.target) || 1
+        const mode = req.query.mode || 'CONSERVATIVE'
+        const feeEst = await this.chains[chain].rpc.estimateFee(target)
+        const feePerKb = parseInt(feeEst.feerate * 100000000)
+        const message = `Fee estimate for conf in approx ${feeEst.blocks} blocks`
+        const results = {fee: feePerKb, blocks: feeEst.blocks}
+
+        console.log(`API [${ip}] [${chain}] get fee estimate`)
+
+        return res.status(200).json(this.api.response.create(true, message, results))
+      } catch (err) {
+        return next(err)
+      }
+    })
+  }
+
+  initPostBroadcastTxRoute() {
     const path = '/api/:chain/broadcast/:hex'
 
     this.api.server.post(path, async (req, res, next) => {
@@ -293,7 +308,7 @@ module.exports = class Chaincore {
     })
   }
 
-  initImportAddressRoute() {
+  initPostImportAddressRoute() {
     const path = '/api/:chain/address/:address'
 
     this.api.server.post(path, async (req, res, next) => {
@@ -306,6 +321,79 @@ module.exports = class Chaincore {
         const results = await this.chains[chain].rpc.importAddress(address, rescan)
 
         console.log(`API [${ip}] [${chain}] post import address: ${address}`)
+
+        return res.status(200).json(this.api.response.create(true, message, results))
+      } catch (err) {
+        return next(err)
+      }
+    })
+  }
+
+  initPostMiscTxSignerRoute() {
+    const path = '/api/:chain/misc/tx-signer'
+
+    this.api.server.post(path, async (req, res, next) => {
+      try {
+        const chain = req.params.chain
+        const ip = this.api.getReqIp(req)
+        const message = `Transaction signed`
+        const [hex, amount, balance, fee, change] = this.chains[chain].tsf.signTx(
+          req.body.amount,
+          req.body.to_address,
+          req.body.change_address,
+          req.body.utxos,
+          req.body.private_keys,
+          req.body.fee_per_kb
+        )
+
+        const results = {
+          amount: req.body.amount,
+          balance: balance,
+          fee: fee,
+          change: change,
+          hex: hex,
+        }
+
+        console.log(`API [${ip}] [${chain}] transaction signed`)
+
+        return res.status(200).json(this.api.response.create(true, message, results))
+      } catch (err) {
+        switch (err.sender) {
+          case 'dust_limit':
+            return res.status(400).json(
+              this.api.response.create(false, err.message)
+            )
+          case 'insufficient_balance':
+            return res.status(400).json(
+              this.api.response.create(false, err.message, err.details)
+            )
+          default:
+            return next(err)
+        }
+      }
+    })
+  }
+
+  initPostMiscTxIdealFeeRoute() {
+    const path = '/api/:chain/misc/tx-ideal-fee'
+
+    this.api.server.post(path, async (req, res, next) => {
+      try {
+        const chain = req.params.chain
+        const ip = this.api.getReqIp(req)
+        const target = parseInt(req.query.target) || 1
+        const feeEst = await this.chains[chain].rpc.estimateFee(target)
+        const feePerKb = parseInt(feeEst.feerate * 100000000)
+        const txFee = this.chains[chain].tsf.estimateFee(
+          req.body.to_address,
+          req.body.change_address,
+          req.body.utxos,
+          feePerKb
+        )
+        const results = {tx_fee: txFee, fee_per_kb: feePerKb, blocks: feeEst.blocks}
+        const message = `Ideal transaction fee for conf in approx ${feeEst.blocks} blocks`
+
+        console.log(`API [${ip}] [${chain}] transaction fee estimated`)
 
         return res.status(200).json(this.api.response.create(true, message, results))
       } catch (err) {
